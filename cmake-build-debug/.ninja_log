@@ -1,0 +1,11 @@
+# ninja log v5
+0	316	1703355346043455543	CMakeFiles/InternetRadioServer.dir/src/main.cpp.o	f1b83463437356df
+240	395	1703449768282587768	InternetRadioServer	ca2e2a51135662fa
+0	63	1703449767952587848	CMakeFiles/InternetRadioServer.dir/src/Server.cpp.o	883861290e966dd8
+1	240	1703449768132587804	CMakeFiles/InternetRadioServer.dir/src/TcpServer.cpp.o	3ac2b14fba9a2b6f
+1	228	1703449768112587810	CMakeFiles/InternetRadioServer.dir/src/UdpServer.cpp.o	14f0be4791694631
+1	86	1704731919026426865	CMakeFiles/InternetRadioServer.dir/src/Server.cpp.o	883861290e966dd8
+1	251	1704731919196426841	CMakeFiles/InternetRadioServer.dir/src/UdpServer.cpp.o	14f0be4791694631
+1	263	1704731919206426843	CMakeFiles/InternetRadioServer.dir/src/TcpServer.cpp.o	3ac2b14fba9a2b6f
+1	304	1704731919246426834	CMakeFiles/InternetRadioServer.dir/src/main.cpp.o	f1b83463437356df
+304	475	1704731919416426816	InternetRadioServer	ca2e2a51135662fa
