@@ -1,8 +1,10 @@
+#include <thread>
 #include "../include/Server.h"
 #include "../include/TcpServer.h"
+#include "../include/UdpServer.h"
 
 int Server::runServer() {
-    TcpServer tcpServer = TcpServer();
+    tcpServer = TcpServer();
     if (tcpServer.socketSetUp() != 0) {
         return 1;
     }

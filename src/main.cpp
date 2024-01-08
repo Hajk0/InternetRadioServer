@@ -8,12 +8,35 @@
 #include <chrono>
 #include "../include/Server.h"
 
-const int MAX_EVENTS = 10;
-const int PORT_TCP = 12345;
-const int PORT_UDP = 54321;
-const int MAX_BUFFER_SIZE = 1024;
+
+
+int sendBroadcast(UdpServer udpServer) {
+    if (udpServer.setUp() != 0) {
+        return 1;
+    }
+
+    /*if (udpServer.epollSetUp() != 0) {
+        return 1;
+    }*/
+
+    std::cout << "Udp server started on port 12344" << std::endl;
+
+    while (true) {
+        std::this_thread::sleep_for(std::chrono::seconds(5));
+
+        const char* message = "Broadcast message from server\n";
+        sockaddr_in clientAddress{};
+        clientAddress.sin_family = AF_INET;
+        clientAddress.sin_port = htons(udpServer.getPort());
+        clientAddress.sin_addr.s_addr = INADDR_BROADCAST;
+
+        sendto(udpServer.getUdpSocket(), message, strlen(message), 0, (sockaddr*) &clientAddress, sizeof(clientAddress));
+    }
+}
 
 int main() {
+    UdpServer udpServer = UdpServer();
+    std::thread broadcastThread(sendBroadcast, udpServer);
     Server server = Server();
     server.runServer();
     return 0;

@@ -20,7 +20,9 @@ class UdpServer {
 public:
     int setUp();
     int epollSetUp();
-    void sendBroadcast();
+
+    int getUdpSocket();
+    int getPort();
 };
 
 
