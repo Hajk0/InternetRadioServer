@@ -73,6 +73,18 @@ build CMakeFiles/InternetRadioServer.dir/src/UdpServer.cpp.o: CXX_COMPILER__Inte
   OBJECT_DIR = CMakeFiles/InternetRadioServer.dir
   OBJECT_FILE_DIR = CMakeFiles/InternetRadioServer.dir/src
 
+build CMakeFiles/InternetRadioServer.dir/src/Library.cpp.o: CXX_COMPILER__InternetRadioServer_unscanned_Debug /home/hajk0/Studia/Semestr5/SK2/InternetRadioServer/src/Library.cpp || cmake_object_order_depends_target_InternetRadioServer
+  DEP_FILE = CMakeFiles/InternetRadioServer.dir/src/Library.cpp.o.d
+  FLAGS = -g -std=gnu++14 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles/InternetRadioServer.dir
+  OBJECT_FILE_DIR = CMakeFiles/InternetRadioServer.dir/src
+
+build CMakeFiles/InternetRadioServer.dir/src/Stream.cpp.o: CXX_COMPILER__InternetRadioServer_unscanned_Debug /home/hajk0/Studia/Semestr5/SK2/InternetRadioServer/src/Stream.cpp || cmake_object_order_depends_target_InternetRadioServer
+  DEP_FILE = CMakeFiles/InternetRadioServer.dir/src/Stream.cpp.o.d
+  FLAGS = -g -std=gnu++14 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles/InternetRadioServer.dir
+  OBJECT_FILE_DIR = CMakeFiles/InternetRadioServer.dir/src
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target InternetRadioServer
@@ -81,7 +93,7 @@ build CMakeFiles/InternetRadioServer.dir/src/UdpServer.cpp.o: CXX_COMPILER__Inte
 #############################################
 # Link the executable InternetRadioServer
 
-build InternetRadioServer: CXX_EXECUTABLE_LINKER__InternetRadioServer_Debug CMakeFiles/InternetRadioServer.dir/src/main.cpp.o CMakeFiles/InternetRadioServer.dir/src/Server.cpp.o CMakeFiles/InternetRadioServer.dir/src/TcpServer.cpp.o CMakeFiles/InternetRadioServer.dir/src/UdpServer.cpp.o
+build InternetRadioServer: CXX_EXECUTABLE_LINKER__InternetRadioServer_Debug CMakeFiles/InternetRadioServer.dir/src/main.cpp.o CMakeFiles/InternetRadioServer.dir/src/Server.cpp.o CMakeFiles/InternetRadioServer.dir/src/TcpServer.cpp.o CMakeFiles/InternetRadioServer.dir/src/UdpServer.cpp.o CMakeFiles/InternetRadioServer.dir/src/Library.cpp.o CMakeFiles/InternetRadioServer.dir/src/Stream.cpp.o
   FLAGS = -g
   OBJECT_DIR = CMakeFiles/InternetRadioServer.dir
   POST_BUILD = :

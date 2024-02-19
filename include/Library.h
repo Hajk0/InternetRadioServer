@@ -5,9 +5,14 @@
 #ifndef INTERNETRADIOSERVER_LIBRARY_H
 #define INTERNETRADIOSERVER_LIBRARY_H
 
+#include <string>
 
 class Library {
 
+public:
+    std::string activeFileName;
+
+    int addSong();
 };
 
 

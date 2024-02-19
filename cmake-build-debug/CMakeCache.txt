@@ -224,6 +224,12 @@ InternetRadioServer_IS_TOP_LEVEL:STATIC=ON
 //Value Computed by CMake
 InternetRadioServer_SOURCE_DIR:STATIC=/home/hajk0/Studia/Semestr5/SK2/InternetRadioServer
 
+//Path to a library.
+SDLMAIN_LIBRARY:FILEPATH=SDLMAIN_LIBRARY-NOTFOUND
+
+//Path to a file.
+SDL_INCLUDE_DIR:PATH=SDL_INCLUDE_DIR-NOTFOUND
+
 
 ########################
 # INTERNAL cache entries
@@ -305,6 +311,8 @@ CMAKE_GENERATOR_INSTANCE:INTERNAL=
 CMAKE_GENERATOR_PLATFORM:INTERNAL=
 //Name of generator toolset.
 CMAKE_GENERATOR_TOOLSET:INTERNAL=
+//Test CMAKE_HAVE_LIBC_PTHREAD
+CMAKE_HAVE_LIBC_PTHREAD:INTERNAL=1
 //Source directory with the top level CMakeLists.txt file for this
 // project
 CMAKE_HOME_DIRECTORY:INTERNAL=/home/hajk0/Studia/Semestr5/SK2/InternetRadioServer
@@ -370,6 +378,10 @@ CMAKE_TAPI-ADVANCED:INTERNAL=1
 CMAKE_UNAME:INTERNAL=/usr/bin/uname
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
+//Details about finding Threads
+FIND_PACKAGE_MESSAGE_DETAILS_Threads:INTERNAL=[TRUE][v()]
+//Path to a library.
+SDL_LIBRARY_TEMP:INTERNAL=SDL_LIBRARY_TEMP-NOTFOUND
 //linker supports push/pop state
 _CMAKE_LINKER_PUSHPOP_STATE_SUPPORTED:INTERNAL=TRUE
 

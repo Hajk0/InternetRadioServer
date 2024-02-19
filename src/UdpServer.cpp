@@ -40,12 +40,12 @@ int UdpServer::setUp() {
         return 1;
     }
 
-    while (true) {
+    /*while (true) {
         const char* message = "Broadcast message from server";
         sendto(udpSocket, message, strlen(message), 0, (sockaddr*) &udpServerAddress, sizeof(udpServerAddress));
         std::cout << "Broadcast sent: " << message << std::endl;
         sleep(5);
-    }
+    }*/
 
     close(udpSocket);
 

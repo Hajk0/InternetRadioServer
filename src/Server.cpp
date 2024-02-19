@@ -4,6 +4,7 @@
 #include "../include/UdpServer.h"
 
 int Server::runServer() {
+    closeServer = false;
     tcpServer = TcpServer();
     if (tcpServer.socketSetUp() != 0) {
         return 1;
@@ -13,7 +14,7 @@ int Server::runServer() {
         return 1;
     }
 
-    while (true) {
+    while (!closeServer) {
         int numEvents = tcpServer.epollWait();
         for (int i = 0; i < numEvents; i++) {
             if (tcpServer.getEvents()[i].data.fd == tcpServer.getServerSocket()) {
@@ -23,4 +24,6 @@ int Server::runServer() {
             }
         }
     }
+
+    return 0;
 }

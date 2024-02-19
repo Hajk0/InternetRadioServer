@@ -7,6 +7,7 @@
 #include <thread>
 #include <chrono>
 #include "../include/Server.h"
+#include <netinet/in.h>
 
 
 
@@ -28,15 +29,15 @@ int sendBroadcast(UdpServer udpServer) {
         sockaddr_in clientAddress{};
         clientAddress.sin_family = AF_INET;
         clientAddress.sin_port = htons(udpServer.getPort());
-        clientAddress.sin_addr.s_addr = INADDR_BROADCAST;
+        clientAddress.sin_addr.s_addr = inet_addr("127.0.0.1");
 
         sendto(udpServer.getUdpSocket(), message, strlen(message), 0, (sockaddr*) &clientAddress, sizeof(clientAddress));
     }
 }
 
 int main() {
-    UdpServer udpServer = UdpServer();
-    std::thread broadcastThread(sendBroadcast, udpServer);
+    // UdpServer udpServer = UdpServer();
+    // std::thread broadcastThread(sendBroadcast, udpServer);
     Server server = Server();
     server.runServer();
     return 0;

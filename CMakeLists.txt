@@ -9,4 +9,9 @@ add_executable(InternetRadioServer
         include/TcpServer.h
         src/TcpServer.cpp
         include/UdpServer.h
-        src/UdpServer.cpp)
+        src/UdpServer.cpp
+        include/Library.h
+        src/Library.cpp
+        include/Stream.h
+        src/Stream.cpp
+)
