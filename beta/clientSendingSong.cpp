@@ -42,8 +42,8 @@ int main() {
     serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
     serverAddr.sin_port = htons(PORT);
 
-    int serverSocket = connect(clientSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
-    if (serverSocket == -1) {
+    int connectResult = connect(clientSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
+    if (connectResult == -1) {
         perror("Błąd podczas łączenia z serwerem");
         close(clientSocket);
         return 1;
@@ -64,14 +64,12 @@ int main() {
         if (send(clientSocket, buffer, currentChunkSize, 0) == -1) {
             perror("Błąd podczas wysyłania danych do serwera");
             close(clientSocket);
-            close(clientSocket);
             delete[] buffer;
             return 1;
         }
 
     }
     close(clientSocket);
-    close(serverSocket);
     inputFile.close();
     delete[] buffer;
 
