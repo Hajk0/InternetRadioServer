@@ -1,4 +1,4 @@
-# Install script for directory: /home/hajk0/Studia/Semestr5/SK2/InternetRadioServer
+# Install script for directory: /home/sanguing/InternetRadioServer
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/hajk0/Studia/Semestr5/SK2/InternetRadioServer/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/sanguing/InternetRadioServer/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

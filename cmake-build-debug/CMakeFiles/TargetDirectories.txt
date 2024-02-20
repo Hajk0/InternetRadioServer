@@ -1,3 +1,3 @@
-/home/hajk0/Studia/Semestr5/SK2/InternetRadioServer/cmake-build-debug/CMakeFiles/InternetRadioServer.dir
-/home/hajk0/Studia/Semestr5/SK2/InternetRadioServer/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/hajk0/Studia/Semestr5/SK2/InternetRadioServer/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/sanguing/InternetRadioServer/cmake-build-debug/CMakeFiles/InternetRadioServer.dir
+/home/sanguing/InternetRadioServer/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/sanguing/InternetRadioServer/cmake-build-debug/CMakeFiles/rebuild_cache.dir
