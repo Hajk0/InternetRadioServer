@@ -72,7 +72,11 @@ void TcpServer::newConnection() {
         event.events = EPOLLIN | EPOLLET;
         event.data.fd = clientSocket;
         epoll_ctl(epollFd, EPOLL_CTL_ADD, clientSocket, &event);
-        // TODO(store ip address and send music from new thread)
+        stream.start(inet_ntoa(clientAddress.sin_addr));
+        if (clientCounter == 0) {
+            clientCounter++;
+            std::thread streamToClients(&Stream::playQueue, this->stream); // stream queue
+        }
     }
 }
 
@@ -99,8 +103,15 @@ void TcpServer::existingConnection(int i) {
             //});
             addSongThread.detach();
         } else if (std::string(buffer, 9) == "SKIP SONG") {
-            std::cout << "SKIPSONG  requested" << std::endl;
+            std::cout << "SKIP SONG requested" << std::endl;
             // TODO(implement skipping song)
+        } else if (std::string(buffer, 9) == "ADD QUEUE") {
+            std::cout << "ADD QUEUE requested" << std::endl;
+            std::string fileName(buffer + 9, buffer + bytesRead - 1);
+            fileName += ".wav";
+            std::cout << fileName << std::endl;
+
+            stream.addToQueue(fileName);
         }
     }
 }
@@ -125,4 +136,5 @@ int TcpServer::receiveFile(std::string filename) {
 
 TcpServer::TcpServer() {
     library = Library();
+    clientCounter = 0;
 }

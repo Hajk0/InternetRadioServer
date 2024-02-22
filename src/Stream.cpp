@@ -6,82 +6,151 @@
 #include <netinet/in.h>
 #include <cstring>
 #include <iostream>
+#include <fstream>
+#include <unistd.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <SDL2/SDL.h>
 #include "../include/Stream.h"
 
-void Stream::addIp(std::string ip) {
-    ipList.push_back(ip);
-    acceptClientSock();
-}
+int Stream::streamSong(string songName) {
 
-void Stream::removeIp(std::string ip) {
-    for (int i = 0; i < ipList.size(); i++) {
-        if (ip == ipList[i]) {
-            ipList.erase(ipList.begin() + i);
-            close(clientSockets[i]);
-            clientSockets.erase(clientSockets.begin() + i);
+////////////////////
+    const string inputFileName = songName;
+    ifstream inputFile(inputFileName, ios::binary);
+    if (!inputFile.is_open()) {
+        cerr << "Nie można otworzyć pliku: " << inputFileName << endl;
+        return 1;
+    }
+
+    // Pobierz rozmiar pliku wejściowego
+    int headerSize = 44;
+    inputFile.seekg(0, ios::end);
+    uint32_t fileSize = (int)inputFile.tellg() - headerSize;
+    inputFile.seekg(44, ios::beg);
+
+    // Oblicz liczbę części
+    int numParts = (fileSize + chunkSize - 1) / chunkSize;
+
+    // Read file in chunks and write each chunk to a separate file
+    char* buffer = new char[chunkSize];
+
+    // Initialize SDL
+    if (SDL_Init(SDL_INIT_AUDIO) < 0) {
+        cerr << "Nie można zainicjować SDL: " << SDL_GetError() << endl;
+        delete[] buffer;
+        return 1;
+    }
+
+    SDL_AudioSpec wavSpec;
+    wavSpec.freq = 44100;
+    wavSpec.format = AUDIO_S16SYS;
+    wavSpec.channels = 2;
+    wavSpec.samples = 4096;
+    wavSpec.callback = nullptr;
+
+    SDL_AudioDeviceID device = SDL_OpenAudioDevice(nullptr, 0, &wavSpec, nullptr, SDL_AUDIO_ALLOW_ANY_CHANGE);
+    if (device == 0) {
+        cerr << "Błąd podczas otwierania urządzenia audio: " << SDL_GetError() << endl;
+        delete[] buffer;
+        SDL_Quit();
+        return 1;
+    }
+
+
+
+    SDL_PauseAudioDevice(device, 0); // Start audio playback
+
+    for (int partIndex = 0; partIndex < numParts; ++partIndex) {
+        // Określ rozmiar chunka dla aktualnej części
+        int currentChunkSize = min(chunkSize, static_cast<int>(fileSize - inputFile.tellg()));
+
+        // Read chunk from input file
+        inputFile.read(buffer, currentChunkSize);
+        for (auto &client : clients) {
+            if (send(client.socket, &currentChunkSize, sizeof(currentChunkSize), 0) == -1) {
+                perror("Błąd podczas wysyłania danych do klienta");
+                close(client.socket);
+                delete[] buffer;
+                return 1;
+            }
+
+            if (send(client.socket, buffer, currentChunkSize, 0) == -1) {
+                perror("Błąd podczas wysyłania danych do klienta");
+                close(client.socket);
+                delete[] buffer;
+                return 1;
+            }
         }
-    }
 
-}
 
-int Stream::stream() {
+        // Wysyłanie muzyki synchronicznie z czasem odtwarzania muzyki
+        SDL_QueueAudio(device, buffer, currentChunkSize);
 
-    while (!closeServer) {
-        sleep(5);
-        for (auto client : clientSockets) {
-            char buf[16];
-            int n = sprintf(buf, "Siemano %d", client);
-
-            write(client, buf, n);
+        // Poczekaj, aby upewnić się, że bufor został opróżniony przed kolejnym odtworzeniem
+        while (SDL_GetQueuedAudioSize(device) > 0) {
+            SDL_Delay(10);
         }
+
+        cout << "Część: " << partIndex << " odtworzona." << endl;
     }
-    close(sock);
+
+    inputFile.close();
+    delete[] buffer;
+
+    SDL_CloseAudioDevice(device);
+    SDL_Quit();
+
+    return 0;
+
+}
+
+int Stream::start(const char *ip) {
+    // Networking
+    int serverSocket;
+    if ((serverSocket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+        perror("Błąd podczas tworzenia gniazda");
+        return 1;
+    }
+
+    struct sockaddr_in clientAddr{};
+    clientAddr.sin_family = AF_INET;
+    clientAddr.sin_addr.s_addr = inet_addr(ip);
+    clientAddr.sin_port = htons(PORT);
+
+    int connectResult = connect(serverSocket, (struct sockaddr*)&clientAddr, sizeof(clientAddr));
+    if (connectResult == -1) {
+        perror("Błąd podczas łączenia z serwerem");
+        close(serverSocket);
+        return 1;
+    }
+
+    cout << "Połączono z serwerem." << endl;
+
+    ClientInfo clientInfo = {serverSocket, clientAddr};
+    clients.push_back(clientInfo);
 
     return 0;
 }
 
-int Stream::acceptClientSock() {
-    socklen_t tmp = sizeof(struct sockaddr);
-    int clientSocket = accept(sock, (struct sockaddr*)&clientAddr, &tmp);
-    if (clientSocket < 0) {
-        std::cout << "Can't create a connection's socket." << std::endl;
-        return 1; // can cause errors
-    }
-    clientSockets.push_back(clientSocket);
-    return 0;
-}
-
-int Stream::streamSetUp() {
-    int sBind, sListen;
-    int n = 1;
-
-    memset(&servAddr, 0, sizeof(sockaddr));
-    servAddr.sin_family = AF_INET;
-    servAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    servAddr.sin_port = htons(STREAM_PORT);
-
-    sock = socket(AF_INET, SOCK_STREAM, 0);
-    if (sock < 0) {
-        std::cout << "Can't create a socket." << std::endl;
-        return 1;
-    }
-    setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (char*)&n, sizeof(n));
-
-    sBind = bind(sock, (struct sockaddr*)&servAddr, sizeof(struct sockaddr));
-    if (sBind < 0) {
-        std::cout << "Can't bind a name to a socket." << std::endl;
-        return 1;
-    }
-
-    sListen = listen(sock, 10);
-    if (sListen < 0) {
-        std::cout << "Can't set queue size." << std::endl;
-        return 1;
+int Stream::end() {
+    for (auto &client : clients) {
+        close(client.socket);
     }
     return 0;
 }
 
-void Stream::streamEnd() {
-    closeServer = true;
+int Stream::playQueue() {
+    while(true) {
+        while (songsQueue.empty())
+            sleep(1);
+        this->streamSong(songsQueue.front());
+        songsQueue.pop();
+    }
+    return 0;
 }
 
+int Stream::addToQueue(string songName) {
+    songsQueue.push(songName);
+    return 0;
+}

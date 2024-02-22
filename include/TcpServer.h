@@ -9,16 +9,20 @@
 #include <netinet/in.h>
 #include <sys/epoll.h>
 #include "Library.h"
+#include "Stream.h"
 
 class TcpServer {
     static const int MAX_EVENTS = 10;
     static const int PORT = 12345;
 
-    int serverSocket;
+    int serverSocket{};
     sockaddr_in serverAddress{};
-    int epollFd;
-    epoll_event event, events[MAX_EVENTS];
+    int epollFd{};
+    epoll_event event{}, events[MAX_EVENTS]{};
     Library library;
+    int clientCounter;
+    Stream stream;
+    bool closeServer = false;
 
 public:
     TcpServer();
