@@ -55,7 +55,6 @@ int main() {
 
     // Read file in chunks and write each chunk to a separate file
     char* buffer = new char[chunkSize];
-    char* buf = new char[8];
 
     for (int partIndex = 0; partIndex < numParts; ++partIndex) {
         // Określ rozmiar chunka dla aktualnej części
