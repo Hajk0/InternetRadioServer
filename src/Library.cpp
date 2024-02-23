@@ -65,7 +65,7 @@ int Library::addSong() {
     }
 
     int bytesReceived;
-    std::cout << "zapisuję do pliku: " << fileName << std::endl;
+    // std::cout << "zapisuję do pliku: " << fileName << std::endl;
     while ((bytesReceived = recv(clientSocket, buffer, chunkSize, 0)) > 0) {
         outputFile.write(buffer, bytesReceived);
     }

@@ -11,29 +11,7 @@
 
 
 
-int sendBroadcast(UdpServer udpServer) {
-    if (udpServer.setUp() != 0) {
-        return 1;
-    }
 
-    /*if (udpServer.epollSetUp() != 0) {
-        return 1;
-    }*/
-
-    std::cout << "Udp server started on port 12344" << std::endl;
-
-    while (true) {
-        std::this_thread::sleep_for(std::chrono::seconds(5));
-
-        const char* message = "Broadcast message from server\n";
-        sockaddr_in clientAddress{};
-        clientAddress.sin_family = AF_INET;
-        clientAddress.sin_port = htons(udpServer.getPort());
-        clientAddress.sin_addr.s_addr = inet_addr("127.0.0.1");
-
-        sendto(udpServer.getUdpSocket(), message, strlen(message), 0, (sockaddr*) &clientAddress, sizeof(clientAddress));
-    }
-}
 
 int main() {
     // UdpServer udpServer = UdpServer();

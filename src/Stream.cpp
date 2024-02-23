@@ -16,7 +16,7 @@
 int Stream::streamSong(string songName) {
 
 ////////////////////
-    const string inputFileName = songName;
+    const string inputFileName = "res/" + songName;
     ifstream inputFile(inputFileName, ios::binary);
     if (!inputFile.is_open()) {
         cerr << "Nie można otworzyć pliku: " << inputFileName << endl;

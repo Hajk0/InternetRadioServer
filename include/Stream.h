@@ -19,8 +19,8 @@ struct ClientInfo {
 
 class Stream {
 private:
-    const int PORT = 12343;
-    const int chunkSize = 1024 * 1024; // 1 MB chunk size
+    int PORT = 12343;
+    int chunkSize = 1024 * 1024; // 1 MB chunk size
     vector<ClientInfo> clients;
     queue<string> songsQueue;
 
