@@ -72,20 +72,29 @@ void TcpServer::newConnection() {
         event.events = EPOLLIN | EPOLLET;
         event.data.fd = clientSocket;
         epoll_ctl(epollFd, EPOLL_CTL_ADD, clientSocket, &event);
+        stream.addToQueue("POLAND-LILYACHTY.wav"); // chwilowo
+
         stream.start(inet_ntoa(clientAddress.sin_addr));
         if (clientCounter == 0) {
             clientCounter++;
-            std::thread streamToClients(&Stream::playQueue, this->stream); // stream queue
+            this->streamToClients = std::thread(&Stream::playQueue, this->stream); // stream queue
+            // streamToClients.detach(); // zmien na join w kończeniu połączenia
         }
     }
 }
 
 void TcpServer::existingConnection(int i) {
-    char buffer[16];
+    char buffer[32];
     ssize_t bytesRead = recv(events[i].data.fd, buffer, sizeof(buffer), 0);
     if (bytesRead <= 0) {
         std::cout << "Connection closed\n";
         // TODO(close thread sending music to client)
+        if (this->streamToClients.joinable()) {
+            this->streamToClients.join();
+            std::cout << "Thread joined" << std::endl;
+        } else {
+            std::cerr << "Thread is not joinable" << std::endl;
+        }
         epoll_ctl(epollFd, EPOLL_CTL_DEL, events[i].data.fd, nullptr);
         close(events[i].data.fd);
     } else {
@@ -107,7 +116,7 @@ void TcpServer::existingConnection(int i) {
             // TODO(implement skipping song)
         } else if (std::string(buffer, 9) == "ADD QUEUE") {
             std::cout << "ADD QUEUE requested" << std::endl;
-            std::string fileName(buffer + 9, buffer + bytesRead - 1);
+            std::string fileName(buffer + 10, buffer + bytesRead - 1);
             fileName += ".wav";
             std::cout << fileName << std::endl;
 

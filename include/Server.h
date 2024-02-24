@@ -8,7 +8,6 @@
 class Server {
 
     TcpServer tcpServer;
-    UdpServer udpServer;
     bool closeServer;
 
 public:

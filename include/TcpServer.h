@@ -22,6 +22,7 @@ class TcpServer {
     Library library;
     int clientCounter;
     Stream stream;
+    std::thread streamToClients;
     bool closeServer = false;
 
 public:

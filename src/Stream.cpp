@@ -11,12 +11,14 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <SDL2/SDL.h>
+#include <thread>
+#include <mutex>
 #include "../include/Stream.h"
 
 int Stream::streamSong(string songName) {
 
 ////////////////////
-    const string inputFileName = "res/" + songName;
+    const string inputFileName = "../res/" + songName;
     ifstream inputFile(inputFileName, ios::binary);
     if (!inputFile.is_open()) {
         cerr << "Nie można otworzyć pliku: " << inputFileName << endl;
@@ -30,11 +32,13 @@ int Stream::streamSong(string songName) {
     inputFile.seekg(44, ios::beg);
 
     // Oblicz liczbę części
-    int numParts = (fileSize + chunkSize - 1) / chunkSize;
+    long numParts = ((long)fileSize + chunkSize - 1) / chunkSize;
+    cout << "numParts: " << numParts << " fileSize: " << fileSize << endl;
 
     // Read file in chunks and write each chunk to a separate file
     char* buffer = new char[chunkSize];
 
+    /* odkomentuj do sprawdzania poprzez odtwarzanie muzyki na serwerze
     // Initialize SDL
     if (SDL_Init(SDL_INIT_AUDIO) < 0) {
         cerr << "Nie można zainicjować SDL: " << SDL_GetError() << endl;
@@ -57,9 +61,8 @@ int Stream::streamSong(string songName) {
         return 1;
     }
 
-
-
     SDL_PauseAudioDevice(device, 0); // Start audio playback
+    */
 
     for (int partIndex = 0; partIndex < numParts; ++partIndex) {
         // Określ rozmiar chunka dla aktualnej części
@@ -67,6 +70,7 @@ int Stream::streamSong(string songName) {
 
         // Read chunk from input file
         inputFile.read(buffer, currentChunkSize);
+        std::cout << "clients: " << clients[0].socket << std::endl;
         for (auto &client : clients) {
             if (send(client.socket, &currentChunkSize, sizeof(currentChunkSize), 0) == -1) {
                 perror("Błąd podczas wysyłania danych do klienta");
@@ -83,7 +87,7 @@ int Stream::streamSong(string songName) {
             }
         }
 
-
+        /* odkomentuj do sprawdzania poprzez odtwarzanie muzyki na serwerze
         // Wysyłanie muzyki synchronicznie z czasem odtwarzania muzyki
         SDL_QueueAudio(device, buffer, currentChunkSize);
 
@@ -91,15 +95,22 @@ int Stream::streamSong(string songName) {
         while (SDL_GetQueuedAudioSize(device) > 0) {
             SDL_Delay(10);
         }
+        */
 
+        //sleep(5);
+        double chunkDuration = ((double)currentChunkSize / (44100.0 * 4.0)) * 1000; // 1000
+        // Poczekaj odpowiedni czas przed wysłaniem kolejnej części
+        std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(chunkDuration)));
         cout << "Część: " << partIndex << " odtworzona." << endl;
     }
 
     inputFile.close();
     delete[] buffer;
 
+    /* odkomentuj do sprawdzania poprzez odtwarzanie muzyki na serwerze
     SDL_CloseAudioDevice(device);
     SDL_Quit();
+    */
 
     return 0;
 
@@ -130,6 +141,7 @@ int Stream::start(const char *ip) {
     ClientInfo clientInfo = {serverSocket, clientAddr};
     clients.push_back(clientInfo);
 
+    cout << "siemano" << endl;
     return 0;
 }
 
@@ -142,15 +154,31 @@ int Stream::end() {
 
 int Stream::playQueue() {
     while(true) {
-        while (songsQueue.empty())
-            sleep(1);
-        this->streamSong(songsQueue.front());
+        std::cout << "siemano 2" << std::endl;
+        while (true) {
+            //queueMutex.lock();
+            bool empty = songsQueue.empty();
+            //queueMutex.unlock();
+            if (!empty)
+                break;
+            std::cout << "Queue is empty" << std::endl;
+            sleep(5);
+        }
+        //queueMutex.lock();
+        //this->streamSong(songsQueue.front());
+        std::string songName = songsQueue.front();
         songsQueue.pop();
+        //queueMutex.unlock();
+        this->streamSong(songName);
     }
     return 0;
 }
 
 int Stream::addToQueue(string songName) {
+    cout << "Empty: " << songsQueue.empty() << endl;
+    //queueMutex.lock();
     songsQueue.push(songName);
+    //queueMutex.unlock();
+    cout << "Empty: " << songsQueue.empty() << endl;
     return 0;
 }

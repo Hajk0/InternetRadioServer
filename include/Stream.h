@@ -9,12 +9,14 @@
 #include <string>
 #include <queue>
 #include <netinet/in.h>
+#include <mutex>
+#include <thread>
 
 using namespace std;
 
 struct ClientInfo {
     int socket;
-    sockaddr_in address;
+    sockaddr_in address;//
 };
 
 class Stream {
@@ -23,6 +25,7 @@ private:
     int chunkSize = 1024 * 1024; // 1 MB chunk size
     vector<ClientInfo> clients;
     queue<string> songsQueue;
+    // mutex queueMutex;
 
 public:
     int start(const char *ip);
