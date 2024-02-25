@@ -77,8 +77,9 @@ void TcpServer::newConnection() {
         stream.start(inet_ntoa(clientAddress.sin_addr));
         if (clientCounter == 0) {
             clientCounter++;
-            this->streamToClients = std::thread(&Stream::playQueue, this->stream); // stream queue
-            // streamToClients.detach(); // zmien na join w kończeniu połączenia
+            this->streamToClients = std::thread(&Stream::playQueue, std::ref(this->stream)); // stream queue
+            //std::thread streamToClients(&Stream::playQueue, this->stream);
+            streamToClients.detach(); // zmien na join w kończeniu połączenia
         }
     }
 }

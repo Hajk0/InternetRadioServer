@@ -15,6 +15,8 @@
 #include <mutex>
 #include "../include/Stream.h"
 
+mutex queueMutex;
+
 int Stream::streamSong(string songName) {
 
 ////////////////////
@@ -98,7 +100,7 @@ int Stream::streamSong(string songName) {
         */
 
         //sleep(5);
-        double chunkDuration = ((double)currentChunkSize / (44100.0 * 4.0)) * 1000; // 1000
+        double chunkDuration = ((double)currentChunkSize / (44100.0 * 4.0)) * 999; // 1000
         // Poczekaj odpowiedni czas przed wysłaniem kolejnej części
         std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(chunkDuration)));
         cout << "Część: " << partIndex << " odtworzona." << endl;
@@ -156,19 +158,19 @@ int Stream::playQueue() {
     while(true) {
         std::cout << "siemano 2" << std::endl;
         while (true) {
-            //queueMutex.lock();
+            queueMutex.lock();
             bool empty = songsQueue.empty();
-            //queueMutex.unlock();
+            queueMutex.unlock();
             if (!empty)
                 break;
             std::cout << "Queue is empty" << std::endl;
             sleep(5);
         }
-        //queueMutex.lock();
+        queueMutex.lock();
         //this->streamSong(songsQueue.front());
         std::string songName = songsQueue.front();
         songsQueue.pop();
-        //queueMutex.unlock();
+        queueMutex.unlock();
         this->streamSong(songName);
     }
     return 0;
@@ -176,9 +178,9 @@ int Stream::playQueue() {
 
 int Stream::addToQueue(string songName) {
     cout << "Empty: " << songsQueue.empty() << endl;
-    //queueMutex.lock();
+    queueMutex.lock();
     songsQueue.push(songName);
-    //queueMutex.unlock();
+    queueMutex.unlock();
     cout << "Empty: " << songsQueue.empty() << endl;
     return 0;
 }

@@ -12,6 +12,7 @@
 #include <mutex>
 #include <thread>
 
+
 using namespace std;
 
 struct ClientInfo {
@@ -23,16 +24,15 @@ class Stream {
 private:
     int PORT = 12343;
     int chunkSize = 1024 * 1024; // 1 MB chunk size
-    vector<ClientInfo> clients;
-    queue<string> songsQueue;
-    // mutex queueMutex;
+    std::vector<ClientInfo> clients;
+    std::queue<std::string> songsQueue;
 
 public:
     int start(const char *ip);
-    int streamSong(string songName);
+    int streamSong(std::string songName);
     int end();
     int playQueue();
-    int addToQueue(string songName);
+    int addToQueue(std::string songName);
 };
 
 

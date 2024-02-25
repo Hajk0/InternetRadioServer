@@ -8,7 +8,7 @@
 class Server {
 
     TcpServer tcpServer;
-    bool closeServer;
+    bool closeServer{};
 
 public:
     int runServer();
