@@ -30,13 +30,13 @@ private:
     bool skipFlag = false;
 
 public:
-    int start(const char *ip);
+    int start(const char *ip, int mainSocket);
     int streamSong(std::string songName);
     int end();
     int playQueue();
     int addToQueue(std::string songName);
     void skipSong();
-    // void deleteClient(int clientSocket);
+    void deleteClient(int clientSocket);
 };
 
 

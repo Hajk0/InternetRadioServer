@@ -121,7 +121,7 @@ int Stream::streamSong(string songName) {
 
 }
 
-int Stream::start(const char *ip) {
+int Stream::start(const char *ip, int mainSocket) {
     // Networking
     int serverSocket;
     if ((serverSocket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
@@ -143,7 +143,8 @@ int Stream::start(const char *ip) {
 
     cout << "Połączono z serwerem." << endl;
 
-    ClientInfo clientInfo = {serverSocket, clientAddr};
+    // Bind main socket to streaming socket
+    ClientInfo clientInfo = {serverSocket, clientAddr, mainSocket};
     clients.push_back(clientInfo);
 
     return 0;
@@ -188,13 +189,13 @@ void Stream::skipSong() {
     this->skipFlag = true;
 }
 
-/*void Stream::deleteClient(int clientSocket) { // chwilowo do testowania
+void Stream::deleteClient(int clientSocket) { // chwilowo do testowania
     for (auto it = this->clients.begin(); it != this->clients.end();) {
-        if (it->address. == clientSocket) {
+        if (it->mainSocket == clientSocket) {
+            close(it->socket);
             it = this->clients.erase(it);
         } else {
             ++it;
         }
     }
 }
-*/

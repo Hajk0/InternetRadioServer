@@ -74,7 +74,7 @@ void TcpServer::newConnection() {
         epoll_ctl(epollFd, EPOLL_CTL_ADD, clientSocket, &event);
         // stream.addToQueue("POLAND-LILYACHTY.wav"); // chwilowo
 
-        stream.start(inet_ntoa(clientAddress.sin_addr));
+        stream.start(inet_ntoa(clientAddress.sin_addr), clientSocket);
         if (clientCounter == 0) {
             clientCounter++;
             this->streamToClients = std::thread(&Stream::playQueue, std::ref(this->stream)); // stream queue
@@ -95,8 +95,7 @@ void TcpServer::existingConnection(int i) {
         } else {
             std::cerr << "Thread is not joinable or server has active clients" << std::endl;
         }*/
-        // TODO(usun clienta z vectora stream->clients)
-        // stream.deleteClient(events[i].data.fd); // TODO(zmień tą funkcję żeby usuwała jednego klienta a nie całą listę)
+        stream.deleteClient(events[i].data.fd);
         epoll_ctl(epollFd, EPOLL_CTL_DEL, events[i].data.fd, nullptr);
         close(events[i].data.fd);
     } else {
