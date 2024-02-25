@@ -11,6 +11,7 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <string>
+#include <filesystem>
 
 #define PORT 12344
 
@@ -77,4 +78,12 @@ int Library::addSong() {
     delete[] buffer;
 
     return 0;
+}
+
+void Library::showSongs() {
+    const std::string folderPath = "../res";
+
+    for (const auto& entry : filesystem::directory_iterator(folderPath)) {
+        std::cout << entry.path() << std::endl;
+    }
 }

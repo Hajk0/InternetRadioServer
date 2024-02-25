@@ -100,7 +100,7 @@ int Stream::streamSong(string songName) {
         */
 
         //sleep(5);
-        double chunkDuration = ((double)currentChunkSize / (44100.0 * 4.0)) * 999; // 1000
+        double chunkDuration = ((double)currentChunkSize / (44100.0 * 4.0)) * 995; // 1000
         // Poczekaj odpowiedni czas przed wysłaniem kolejnej części
         std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(chunkDuration)));
         cout << "Część: " << partIndex << " odtworzona." << endl;
@@ -197,5 +197,17 @@ void Stream::deleteClient(int clientSocket) { // chwilowo do testowania
         } else {
             ++it;
         }
+    }
+}
+
+void Stream::showQueue() {
+    std::queue<string> copyQueue = this->songsQueue;
+
+    while (!copyQueue.empty()) {
+        string element = copyQueue.front();
+        cout << "Next song: " << element << endl;
+
+        // Wykonaj operacje na elemencie
+        copyQueue.pop();
     }
 }

@@ -6,6 +6,7 @@
 #define INTERNETRADIOSERVER_LIBRARY_H
 
 #include <string>
+#include <filesystem>
 
 class Library {
 
@@ -13,6 +14,7 @@ public:
     std::string activeFileName;
 
     int addSong();
+    void showSongs();
 };
 
 

@@ -106,7 +106,7 @@ void TcpServer::existingConnection(int i) {
             fileName += ".wav";
             std::cout << fileName << std::endl;
 
-            this->library.activeFileName = "../res/" + fileName; // TODO(sprawdz czy działa dodawanie w dobrym folderze)
+            this->library.activeFileName = "../res/" + fileName;
             std::thread addSongThread(&Library::addSong, this->library);
             //std::thread addSongThread([this]() {
             //    this->library.addSong();
@@ -124,8 +124,10 @@ void TcpServer::existingConnection(int i) {
             stream.addToQueue(fileName);
         } else if (std::string(buffer, 10) == "SHOW SONGS") {
             // TODO(send available songs in library to client)
+            library.showSongs();
         } else if (std::string(buffer, 10) == "SHOW QUEUE") {
             // TODO(send songs in queue to client)
+            stream.showQueue();
         }
     }
 }

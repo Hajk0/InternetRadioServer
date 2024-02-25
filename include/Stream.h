@@ -37,6 +37,7 @@ public:
     int addToQueue(std::string songName);
     void skipSong();
     void deleteClient(int clientSocket);
+    void showQueue();
 };
 
 
