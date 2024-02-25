@@ -18,6 +18,7 @@ using namespace std;
 struct ClientInfo {
     int socket;
     sockaddr_in address;//
+    int mainSocket;
 };
 
 class Stream {
@@ -26,6 +27,7 @@ private:
     int chunkSize = 1024 * 1024; // 1 MB chunk size
     std::vector<ClientInfo> clients;
     std::queue<std::string> songsQueue;
+    bool skipFlag = false;
 
 public:
     int start(const char *ip);
@@ -33,6 +35,8 @@ public:
     int end();
     int playQueue();
     int addToQueue(std::string songName);
+    void skipSong();
+    // void deleteClient(int clientSocket);
 };
 
 

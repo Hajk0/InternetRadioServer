@@ -72,7 +72,7 @@ void TcpServer::newConnection() {
         event.events = EPOLLIN | EPOLLET;
         event.data.fd = clientSocket;
         epoll_ctl(epollFd, EPOLL_CTL_ADD, clientSocket, &event);
-        stream.addToQueue("POLAND-LILYACHTY.wav"); // chwilowo
+        // stream.addToQueue("POLAND-LILYACHTY.wav"); // chwilowo
 
         stream.start(inet_ntoa(clientAddress.sin_addr));
         if (clientCounter == 0) {
@@ -89,13 +89,14 @@ void TcpServer::existingConnection(int i) {
     ssize_t bytesRead = recv(events[i].data.fd, buffer, sizeof(buffer), 0);
     if (bytesRead <= 0) {
         std::cout << "Connection closed\n";
-        // TODO(close thread sending music to client)
-        if (this->streamToClients.joinable()) {
+        /*if (this->streamToClients.joinable() && clientCounter == 0) {
             this->streamToClients.join();
             std::cout << "Thread joined" << std::endl;
         } else {
-            std::cerr << "Thread is not joinable" << std::endl;
-        }
+            std::cerr << "Thread is not joinable or server has active clients" << std::endl;
+        }*/
+        // TODO(usun clienta z vectora stream->clients)
+        // stream.deleteClient(events[i].data.fd); // TODO(zmień tą funkcję żeby usuwała jednego klienta a nie całą listę)
         epoll_ctl(epollFd, EPOLL_CTL_DEL, events[i].data.fd, nullptr);
         close(events[i].data.fd);
     } else {
@@ -106,7 +107,7 @@ void TcpServer::existingConnection(int i) {
             fileName += ".wav";
             std::cout << fileName << std::endl;
 
-            this->library.activeFileName = fileName;
+            this->library.activeFileName = "../res/" + fileName; // TODO(sprawdz czy działa dodawanie w dobrym folderze)
             std::thread addSongThread(&Library::addSong, this->library);
             //std::thread addSongThread([this]() {
             //    this->library.addSong();
@@ -114,7 +115,7 @@ void TcpServer::existingConnection(int i) {
             addSongThread.detach();
         } else if (std::string(buffer, 9) == "SKIP SONG") {
             std::cout << "SKIP SONG requested" << std::endl;
-            // TODO(implement skipping song)
+            stream.skipSong();
         } else if (std::string(buffer, 9) == "ADD QUEUE") {
             std::cout << "ADD QUEUE requested" << std::endl;
             std::string fileName(buffer + 10, buffer + bytesRead - 1);
@@ -122,6 +123,10 @@ void TcpServer::existingConnection(int i) {
             std::cout << fileName << std::endl;
 
             stream.addToQueue(fileName);
+        } else if (std::string(buffer, 10) == "SHOW SONGS") {
+            // TODO(send available songs in library to client)
+        } else if (std::string(buffer, 10) == "SHOW QUEUE") {
+            // TODO(send songs in queue to client)
         }
     }
 }

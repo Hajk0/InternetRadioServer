@@ -18,8 +18,8 @@
 mutex queueMutex;
 
 int Stream::streamSong(string songName) {
+    this->skipFlag = false;
 
-////////////////////
     const string inputFileName = "../res/" + songName;
     ifstream inputFile(inputFileName, ios::binary);
     if (!inputFile.is_open()) {
@@ -104,6 +104,9 @@ int Stream::streamSong(string songName) {
         // Poczekaj odpowiedni czas przed wysłaniem kolejnej części
         std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(chunkDuration)));
         cout << "Część: " << partIndex << " odtworzona." << endl;
+
+        if (this->skipFlag == true)
+            break;
     }
 
     inputFile.close();
@@ -143,7 +146,6 @@ int Stream::start(const char *ip) {
     ClientInfo clientInfo = {serverSocket, clientAddr};
     clients.push_back(clientInfo);
 
-    cout << "siemano" << endl;
     return 0;
 }
 
@@ -156,7 +158,6 @@ int Stream::end() {
 
 int Stream::playQueue() {
     while(true) {
-        std::cout << "siemano 2" << std::endl;
         while (true) {
             queueMutex.lock();
             bool empty = songsQueue.empty();
@@ -177,10 +178,23 @@ int Stream::playQueue() {
 }
 
 int Stream::addToQueue(string songName) {
-    cout << "Empty: " << songsQueue.empty() << endl;
     queueMutex.lock();
     songsQueue.push(songName);
     queueMutex.unlock();
-    cout << "Empty: " << songsQueue.empty() << endl;
     return 0;
 }
+
+void Stream::skipSong() {
+    this->skipFlag = true;
+}
+
+/*void Stream::deleteClient(int clientSocket) { // chwilowo do testowania
+    for (auto it = this->clients.begin(); it != this->clients.end();) {
+        if (it->address. == clientSocket) {
+            it = this->clients.erase(it);
+        } else {
+            ++it;
+        }
+    }
+}
+*/
