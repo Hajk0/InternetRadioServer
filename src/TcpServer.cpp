@@ -72,7 +72,6 @@ void TcpServer::newConnection() {
         event.events = EPOLLIN | EPOLLET;
         event.data.fd = clientSocket;
         epoll_ctl(epollFd, EPOLL_CTL_ADD, clientSocket, &event);
-        // stream.addToQueue("POLAND-LILYACHTY.wav"); // chwilowo
 
         stream.start(inet_ntoa(clientAddress.sin_addr), clientSocket);
         if (clientCounter == 0) {
@@ -89,12 +88,6 @@ void TcpServer::existingConnection(int i) {
     ssize_t bytesRead = recv(events[i].data.fd, buffer, sizeof(buffer), 0);
     if (bytesRead <= 0) {
         std::cout << "Connection closed\n";
-        /*if (this->streamToClients.joinable() && clientCounter == 0) {
-            this->streamToClients.join();
-            std::cout << "Thread joined" << std::endl;
-        } else {
-            std::cerr << "Thread is not joinable or server has active clients" << std::endl;
-        }*/
         stream.deleteClient(events[i].data.fd);
         epoll_ctl(epollFd, EPOLL_CTL_DEL, events[i].data.fd, nullptr);
         close(events[i].data.fd);
@@ -123,7 +116,6 @@ void TcpServer::existingConnection(int i) {
 
             stream.addToQueue(fileName);
         } else if (std::string(buffer, 10) == "SHOW SONGS") {
-            // TODO(send available songs in library to client)
             vector<string> songs = library.showSongs();
             this->sendAvaiableSongs(events[i].data.fd, songs);
         } else if (std::string(buffer, 10) == "SHOW QUEUE") {
@@ -143,12 +135,6 @@ epoll_event *TcpServer::getEvents() {
 
 int TcpServer::getServerSocket() const {
     return serverSocket;
-}
-
-int TcpServer::receiveFile(std::string filename) {
-    std::ofstream outputFile(filename, std::ios::binary);
-    
-    return 0;
 }
 
 TcpServer::TcpServer() {

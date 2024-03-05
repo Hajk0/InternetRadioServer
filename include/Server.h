@@ -3,12 +3,11 @@
 
 
 #include "TcpServer.h"
-#include "UdpServer.h"
 
 class Server {
 
     TcpServer tcpServer;
-    bool closeServer{};
+    bool closeServer = false;
 
 public:
     int runServer();

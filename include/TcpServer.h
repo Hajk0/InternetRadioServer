@@ -32,7 +32,6 @@ public:
     int epollWait();
     void newConnection();
     void existingConnection(int i);
-    int receiveFile(std::string filename);
 
     epoll_event* getEvents();
     int getServerSocket() const;

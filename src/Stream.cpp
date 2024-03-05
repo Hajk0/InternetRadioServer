@@ -40,32 +40,6 @@ int Stream::streamSong(string songName) {
     // Read file in chunks and write each chunk to a separate file
     char* buffer = new char[chunkSize];
 
-    /* odkomentuj do sprawdzania poprzez odtwarzanie muzyki na serwerze
-    // Initialize SDL
-    if (SDL_Init(SDL_INIT_AUDIO) < 0) {
-        cerr << "Nie można zainicjować SDL: " << SDL_GetError() << endl;
-        delete[] buffer;
-        return 1;
-    }
-
-    SDL_AudioSpec wavSpec;
-    wavSpec.freq = 44100;
-    wavSpec.format = AUDIO_S16SYS;
-    wavSpec.channels = 2;
-    wavSpec.samples = 4096;
-    wavSpec.callback = nullptr;
-
-    SDL_AudioDeviceID device = SDL_OpenAudioDevice(nullptr, 0, &wavSpec, nullptr, SDL_AUDIO_ALLOW_ANY_CHANGE);
-    if (device == 0) {
-        cerr << "Błąd podczas otwierania urządzenia audio: " << SDL_GetError() << endl;
-        delete[] buffer;
-        SDL_Quit();
-        return 1;
-    }
-
-    SDL_PauseAudioDevice(device, 0); // Start audio playback
-    */
-
     for (int partIndex = 0; partIndex < numParts; ++partIndex) {
         // Określ rozmiar chunka dla aktualnej części
         int currentChunkSize = min(chunkSize, static_cast<int>(fileSize - inputFile.tellg()));
@@ -89,18 +63,7 @@ int Stream::streamSong(string songName) {
             }
         }
 
-        /* odkomentuj do sprawdzania poprzez odtwarzanie muzyki na serwerze
-        // Wysyłanie muzyki synchronicznie z czasem odtwarzania muzyki
-        SDL_QueueAudio(device, buffer, currentChunkSize);
-
-        // Poczekaj, aby upewnić się, że bufor został opróżniony przed kolejnym odtworzeniem
-        while (SDL_GetQueuedAudioSize(device) > 0) {
-            SDL_Delay(10);
-        }
-        */
-
-        //sleep(5);
-        double chunkDuration = ((double)currentChunkSize / (44100.0 * 4.0)) * 995; // 1000
+        double chunkDuration = ((double)currentChunkSize / (44100.0 * 4.0)) * 990; // 1000
         // Poczekaj odpowiedni czas przed wysłaniem kolejnej części
         std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(chunkDuration)));
         cout << "Część: " << partIndex << " odtworzona." << endl;
@@ -111,11 +74,6 @@ int Stream::streamSong(string songName) {
 
     inputFile.close();
     delete[] buffer;
-
-    /* odkomentuj do sprawdzania poprzez odtwarzanie muzyki na serwerze
-    SDL_CloseAudioDevice(device);
-    SDL_Quit();
-    */
 
     return 0;
 
