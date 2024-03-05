@@ -7,6 +7,7 @@
 
 #include <string>
 #include <filesystem>
+#include <vector>
 
 class Library {
 
@@ -14,7 +15,7 @@ public:
     std::string activeFileName;
 
     int addSong();
-    void showSongs();
+    std::vector<std::string> showSongs();
 };
 
 

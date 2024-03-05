@@ -124,7 +124,8 @@ void TcpServer::existingConnection(int i) {
             stream.addToQueue(fileName);
         } else if (std::string(buffer, 10) == "SHOW SONGS") {
             // TODO(send available songs in library to client)
-            library.showSongs();
+            vector<string> songs = library.showSongs();
+            this->sendAvaiableSongs(events[i].data.fd, songs);
         } else if (std::string(buffer, 10) == "SHOW QUEUE") {
             // TODO(send songs in queue to client)
             stream.showQueue();
@@ -153,4 +154,28 @@ int TcpServer::receiveFile(std::string filename) {
 TcpServer::TcpServer() {
     library = Library();
     clientCounter = 0;
+}
+
+int TcpServer::sendAvaiableSongs(int sock, vector<string> songs) {
+    string message;
+    for (const auto& str : songs) {
+        message += str;
+        message += ";";
+    }
+
+    // Wyślij długość wiadomości jako nagłówek
+    int msg_length = message.length(); // htons(message.length());
+    cout << message << ": " << msg_length << endl;
+    if (send(sock, &msg_length, sizeof(msg_length), 0) == -1) {
+        cerr << "Error sending message length" << endl;
+        return -1;
+    }
+
+    // Wyślij zawartość wektora
+    if (send(sock, message.c_str(), message.length(), 0) == -1) {
+        cerr << "Error sending message" << endl;
+        return -1;
+    }
+
+    return 0;
 }

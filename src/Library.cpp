@@ -12,6 +12,7 @@
 #include <sys/socket.h>
 #include <string>
 #include <filesystem>
+#include <vector>
 
 #define PORT 12344
 
@@ -80,10 +81,15 @@ int Library::addSong() {
     return 0;
 }
 
-void Library::showSongs() {
+vector<string> Library::showSongs() {
     const std::string folderPath = "../res";
+    std::vector<std::string> songs;
 
     for (const auto& entry : filesystem::directory_iterator(folderPath)) {
-        std::cout << entry.path() << std::endl;
+        std::string songPath = entry.path();
+        std::string songName = songPath.substr(7, songPath.length() - (4 + 7));
+        songs.push_back(songName);
     }
+
+    return songs;
 }

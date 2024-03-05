@@ -37,6 +37,8 @@ public:
     epoll_event* getEvents();
     int getServerSocket() const;
 
+    int sendAvaiableSongs(int sock, vector<string> songs);
+
 };
 
 
